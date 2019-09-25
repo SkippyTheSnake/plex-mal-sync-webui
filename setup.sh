@@ -8,4 +8,4 @@ venv/bin/pip3.7 install -r requirements.txt
 touch err.log
 touch out.log
 systemctl restart nginx
-sudo supervisorctl reload
+sudo supervisorctl restart plex-mal-sync-webui
