@@ -6,6 +6,7 @@ This program is designed to be run on a Ubuntu server.\
 You must have an environment variable `PROGRAM_DATA_PATH` and set it to the path where all the program data is going to be located.\
 Run the program and it will generate a config file in the data location.\
 Fill in that data and the then the program is ready.\
+You will also need chromedriver on the server to run the updater.\
 \
 Create a virtual environment for the project and install the requirements into it.
 ```
