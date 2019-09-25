@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Plex My Anime List sync</title>
+
+  <!-- Bootsrap css -->
+  <link
+    crossorigin="anonymous"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    rel="stylesheet"
+  />
+  <!-- Cover page css -->
+
+  <link
+    href="https://getbootstrap.com/docs/4.3/examples/cover/cover.css"
+    rel="stylesheet"
+  />
+  <style>
+      .hidden {
+        display: none;
+      }
+
+  </style>
+</head>
+<body
+  class="text-center"
+  style="background-image: url({{
+      url_for('static', filename='background.jpg')
+    }}); background-size: cover;"
+>
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <!-- Navbar -->
+  <header class="masthead mb-auto" style="margin-bottom: 10% !important;">
+    <div class="inner">
+      <h3 class="masthead-brand">Plex MyAnimeList sync</h3>
+      <nav class="nav nav-masthead justify-content-center">
+        <a class="nav-link active" href="/">Home</a>
+        <a class="nav-link" href="/mapping_errors"
+        >Mapping Errors
+          <span class="badge badge-warning">{{ num_errors }}</span></a
+        >
+        <a class="nav-link" href="/config">Config</a>
+      </nav>
+    </div>
+  </header>
+  <!-- Main content -->
+  <main class="inner cover" role="main">
+    <p style="font-size: 2.5rem; padding-top: 35%;">
+      Time until next sync:
+    </p>
+    <p id="countdown" style="font-size: 6rem;">{{ countdown }}</p>
+    <hr class="my-4"/>
+    <div class="lead">
+      <a
+        class="btn btn-lg btn-secondary"
+        id="runSyncBtn"
+        onclick="forceRunSync()"
+        style="font-size: 1.25rem;"
+      >Sync now</a
+      >
+      <h1 class="hidden" id="latestLog">{{ latest_log }}</h1>
+    </div>
+  </main>
+  <!-- Footer -->
+  <footer
+    class="mastfoot mt-auto"
+    id="footer"
+    style="margin-top: 30%; margin-bottom: 20%; height: 300px;"
+  >
+    <div
+      class="container rounded-lg"
+      id="consoleWrapper"
+      style="text-align: left !important; background: rgba(24, 27, 33, 0.8); padding: 2%; height: 100%; display: none"
+    >
+      <p id="console" style="white-space: pre;">{{ recent_updates }}</p>
+    </div>
+  </footer>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script>
+    var syncRunning = {{ sync_running }};
+    var timeRemining = {{ time_remaining }}
+
+    function hideElements() {
+      if (syncRunning) {
+        document.getElementById("runSyncBtn").classList.add("hidden");
+        document.getElementById("latestLog").classList.remove("hidden");
+      } else {
+        document.getElementById("runSyncBtn").classList.remove("hidden");
+        document.getElementById("latestLog").classList.add("hidden");
+      }
+    }
+
+    hideElements()
+
+    $("document").ready(function() {
+      $("#footer").hover(
+        function() {
+          $("#consoleWrapper").fadeIn();
+        },
+        function() {
+          $("#consoleWrapper").fadeOut();
+        }
+      );
+    });
+
+    function request(url, callback) {
+      return $.ajax({
+        method: "GET",
+        url: url,
+        success: function(data) {
+          if (callback) {
+            callback(data);
+          }
+        }
+      });
+    }
+
+    function forceRunSync() {
+      if (!syncRunning) {
+        syncRunning = true;
+        request("/api/run_sync");
+      }
+    }
+
+    function runUpdates() {
+        timeRemining --;
+        if (timeRemining <= 0) {
+          timeRemining = 86400
+        }
+        hours = Math.floor(timeRemining / 3600).toString().padStart(2, '0');
+        minutes = (Math.floor(timeRemining / 60) % 60).toString().padStart(2, '0');
+        seconds = Math.floor(timeRemining % 60).toString().padStart(2, '0');
+        $("#countdown").text(hours + " : " + minutes + " : " + seconds)
+    }
+
+    setInterval(() => runUpdates(), 1000);
+
+    var socket = io.connect(
+      "http://" + document.domain + ":" + location.port + "/socket"
+    );
+
+    socket.on("new_log", function(data) {
+      $("#latestLog").text(data.log);
+    });
+
+    socket.on("update_sync_running", function(data) {
+      syncRunning = data.sync_running;
+      hideElements()
+    });
+
+    socket.on("recent_updates", function(data) {
+      $("#console").text(data.recent_updates);
+    });
+
+</script>
+</html>

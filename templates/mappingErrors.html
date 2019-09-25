@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Plex My Anime List sync</title>
+
+    <!-- Bootsrap css -->
+    <link
+      crossorigin="anonymous"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      rel="stylesheet"
+    />
+    <!-- Cover page css -->
+
+    <link
+      href="https://getbootstrap.com/docs/4.3/examples/cover/cover.css"
+      rel="stylesheet"
+    />
+    <style>
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        /* display: none; <- Crashes Chrome on hover */
+        -webkit-appearance: none;
+        margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield; /* Firefox */
+      }
+    </style>
+  </head>
+  <body
+    class="text-center"
+    style="background-image: url({{
+      url_for('static', filename='background.jpg')
+    }}); background-size: cover;"
+  >
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <!-- Navbar -->
+      <header class="masthead mb-auto" style="margin-bottom: 10% !important;">
+        <div class="inner">
+          <h3 class="masthead-brand">Plex MyAnimeList sync</h3>
+          <nav class="nav nav-masthead justify-content-center">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link active" href="/mapping_errors">Mapping Errors</a>
+            <a class="nav-link" href="/config">Config</a>
+          </nav>
+        </div>
+      </header>
+      <!-- Main content -->
+      <main class="inner cover" role="main">
+        <h1>Mapping errors</h1>
+        <form action="/mapping_errors" method="post">
+          {% for tvdb_id, data in errors.items() %}
+          <div class="form-group" style="text-align: left !important;">
+            <label>{{ data.title }}</label>
+            {% for season, season_url in data.unmapped_seasons.items() %}
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <a class="btn btn-info" href="{{ season_url }}" target="blank"
+                  >Season {{ season }}</a
+                >
+                <!-- <span class="input-group-text">Season {{ season }}</!-->
+              </div>
+              <input
+                aria-describedby="basic-addon1"
+                class="form-control"
+                placeholder="MyAnimelist id"
+                type="number"
+                name="formData {{ tvdb_id + '|' + season | string }}"
+              />
+            </div>
+            {% endfor %}
+          </div>
+          <br />
+          {% endfor %}
+          <button class="btn btn-primary" type="submit" href="/mapping_errors">
+            Submit
+          </button>
+        </form>
+      </main>
+      <!-- Footer -->
+      <footer></footer>
+    </div>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</html>
