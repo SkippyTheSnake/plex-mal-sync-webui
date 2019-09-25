@@ -7,5 +7,5 @@ python3.7 -m venv venv
 venv/bin/pip3.7 install -r requirements.txt
 touch err.log
 touch out.log
-systemctl restart nginx
+sudo systemctl restart nginx
 sudo supervisorctl restart plex-mal-sync-webui
