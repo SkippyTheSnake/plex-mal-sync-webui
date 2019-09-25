@@ -51,6 +51,14 @@ def index():
                            time_remaining = time_remaining, latest_log = config.latest_log)
 
 
+@app.route('/api/driver_screenshot')
+def driver_screenshot():
+    if config.DRIVER is not None:
+        config.DRIVER.save_screenshot()
+        
+    return jsonify({})
+
+
 @app.route('/mapping_errors', methods = ['GET', 'POST'])
 def mapping_errors():
     if request.method == 'POST':
