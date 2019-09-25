@@ -15,25 +15,25 @@ s.close()
 
 with open('setupfiles/plex-mal-sync-webui.conf', 'w') as f:
     f.write(f"""[program:{PROJECT_NAME}]
-    directory={pwd}
-    command={os.path.join(pwd, 'venv/bin/python')} main.py
-    user={username}
-    autostart=true
-    autorestart=true
-    stopasgroup=true
-    killasgroup=true
-    stderr_logfile={os.path.join(pwd, 'err.log')}
-    stdout_logfile={os.path.join(pwd, 'out.log')}""")
+directory={pwd}
+command={os.path.join(pwd, 'venv/bin/python')} main.py
+user={username}
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+stderr_logfile={os.path.join(pwd, 'err.log')}
+stdout_logfile={os.path.join(pwd, 'out.log')}""")
 
 with open('setupfiles/plex-mal-sync-webui', 'w') as f:
     f.write(f"""server {{
         listen {PORT};
         server_name {server_ip};
-    
+
         location /static {{
             alias {os.path.join(pwd, 'static')};
         }}
-    
+
         location / {{
             proxy_pass http://localhost:{INTERNAL_PORT};
             include /etc/nginx/proxy_params;
