@@ -5,5 +5,7 @@ cp setupfiles/plex-mal-sync-webui.conf /etc/supervisor/conf.d/plex-mal-sync-webu
 cp setupfiles/plex-mal-sync-webui /etc/nginx/sites-enabled/plex-mal-sync-webui
 python3.7 -m venv venv
 venv/bin/pip3.7 install -r requirements.txt
+touch err.log
+touch out.log
 systemctl restart nginx
 sudo supervisorctl reload
