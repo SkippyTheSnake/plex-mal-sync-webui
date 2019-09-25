@@ -42,6 +42,12 @@ if not os.path.exists(CONFIG_PATH):
 with open(CONFIG_PATH, 'r') as f:
     data = json.load(f)
 
+# Check that all config values have been filled in
+unfilled_values = [k for k, v in data.items() if v is None]
+if len(unfilled_values) > 0:
+    print("Please fill in the following config values: " + ", ".join(unfilled_values))
+    sys.exit()
+
 # Configurable
 LIBRARY = data.get('LIBRARY')
 SERVER_TOKEN = data.get('SERVER_TOKEN')
