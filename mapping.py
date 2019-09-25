@@ -120,13 +120,13 @@ def update_tvdb_mal_mapping(title: str, tvdbid: str, seasons: list, driver) -> N
 
     series_mapping = tvdb_mal_mapping.get(tvdbid)
     for season in seasons:
-        log(f"Season {season}")
+        log(f"{title} season {season}")
         mal_id = series_mapping.get(season)
 
         # Failed to get mal_id from mapping
         if mal_id is None:
             # Get the anidb_id and obtain the mal_id from that
-            log("Unable to get mal id")
+            log(f"Getting mal id for {title} season {season}")
             anidb_id = get_anidbid(tvdbid, season)
 
             # Failed to find the matching anidb_id
