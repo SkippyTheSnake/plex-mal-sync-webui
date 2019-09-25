@@ -4,6 +4,7 @@ A program to sync MyAnimeList with a plex library so that you no longer need to 
 ## Installation
 This program is designed to be run on a Ubuntu server.\
 You must have an environment variable `PROGRAM_DATA_PATH` and set it to the path where all the program data is going to be located.\
+If you are using supervisor this can be set in the ''/etc/supervisor/supervisord.conf''.\
 Run the program and it will generate a config file in the data location.\
 Fill in that data and the then the program is ready.\
 You will also need chromedriver on the server to run the updater.\
