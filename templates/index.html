@@ -22,6 +22,7 @@
         display: none;
       }
 
+
   </style>
 </head>
 <body
@@ -54,7 +55,7 @@
     <hr class="my-4"/>
     <div class="lead">
       <a
-        class="btn btn-lg btn-secondary"
+        class="btn btn-lg btn-dark"
         id="runSyncBtn"
         onclick="forceRunSync()"
         style="font-size: 1.25rem;"
@@ -156,6 +157,7 @@
     socket.on("recent_updates", function(data) {
       $("#console").text(data.recent_updates);
     });
+
 
 </script>
 </html>
