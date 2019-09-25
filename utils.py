@@ -7,6 +7,7 @@ import json
 import os
 import config
 from config import RECENT_UPDATES_PATH
+import sys
 
 
 def log(text: str, *style: str) -> None:
@@ -14,7 +15,8 @@ def log(text: str, *style: str) -> None:
     config.socketio.emit('new_log', {'log': text}, namespace = '/socket')
     config.latest_log = text
     timestamp = datetime.today().strftime('%d-%m-%Y %H:%M:%S')
-    print(f"{timestamp} {''.join(style) + text}{Style.RESET_ALL}")
+    print(f"{timestamp} {''.join(style) + text}{Style.RESET_ALL}", file = sys.stdout)
+    sys.stdout.flush()
 
 
 def load_json(filepath: str, default_value: Union[list, dict] = None) -> Union[list, dict, None]:
