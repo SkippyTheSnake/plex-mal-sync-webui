@@ -7,6 +7,14 @@ if env_data_path is None:
     print("Error please set an environment variable for PROGRAM_DATA_PATH")
     sys.exit()
 
+if not os.path.exists('err.log'):
+    with open('err.log', 'w') as f:
+        f.write('')
+
+if not os.path.exists('out.log'):
+    with open('out.log', 'w') as f:
+        f.write('')
+
 # Fixed
 DATA_PATH = os.path.join(env_data_path, 'plex-mal-sync-webui')
 if not os.path.exists(DATA_PATH):
