@@ -6,6 +6,7 @@ import config
 from plexConnection import PlexConnection
 from utils import log
 import utils
+from pprint import pprint
 
 
 def update_mal_tvdb_mappings(shows: list):
@@ -44,19 +45,19 @@ def process_seasons(show: Show, series_mapping: dict, title: str, mal_list: MalL
         mal_data = mal_list.get_anime(mal_id) or {}
 
         total_episodes = mal_data.get('anime_num_episodes')
-        mal_watched_episodes = mal_data.get('num_watched_episodes') or 0
-        plex_watched_episodes = len([x for x in season.episodes() if x.isWatched])
+        mal_watched_eps = mal_data.get('num_watched_episodes') or 0
+        plex_watched_eps = len([x for x in season.episodes() if x.isWatched])
 
         # status = get_status(plex_watched_episodes, total_episodes)
 
-        if plex_watched_episodes <= mal_watched_episodes or mal_watched_episodes == total_episodes:  # or status == 2:
+        if len(mal_data) > 0 and plex_watched_eps <= mal_watched_eps or mal_watched_eps == total_episodes:
             continue
 
         to_update.append({'title'           : title,
                           'season'          : season.seasonNumber,
                           'tvdb_id'         : tvdb_id,
                           'mal_id'          : mal_id,
-                          'watched_episodes': plex_watched_episodes})
+                          'watched_episodes': plex_watched_eps})
 
     return to_update
 
@@ -106,8 +107,11 @@ def do_sync():
         for series in to_update:
             config.DRIVER.update_series(series)
 
+            title = series.get('title')
+            season_no = series.get('season')
             recent_updates = utils.get_recent_updates()
-            recent_updates.append(f"{series.get('title')} season {series.get('season')}")
+            
+            recent_updates.append(f"{title} season {season_no}")
             config.socketio.emit('recent_updates', {'recent_updates': "\n".join(recent_updates)},
                                  namespace = '/socket')
             utils.save_recent_updates(recent_updates)
