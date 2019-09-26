@@ -20,14 +20,14 @@ def update_mal_tvdb_mappings(shows: list):
     mapping.verify_mapping_errors()
 
 
-def get_status(plex_watched_episodes: int, total_episodes: int):
-    status = 5  # To watch
+def get_status(plex_watched_episodes: int, total_episodes: int) -> str:
+    status = '5'  # To watch
 
     if plex_watched_episodes != 0:
-        status = 1  # Currently Watching
+        status = '1'  # Currently Watching
 
     if total_episodes is not None and 0 < total_episodes <= plex_watched_episodes:
-        status = 2  # Completed
+        status = '2'  # Completed
 
     return status
 
@@ -57,7 +57,8 @@ def process_seasons(show: Show, series_mapping: dict, title: str, mal_list: MalL
                           'season'          : season.seasonNumber,
                           'tvdb_id'         : tvdb_id,
                           'mal_id'          : mal_id,
-                          'watched_episodes': plex_watched_eps})
+                          'watched_episodes': plex_watched_eps,
+                          'mal_watched_eps' : mal_watched_eps})
 
     return to_update
 
@@ -105,13 +106,22 @@ def do_sync():
     if len(to_update) > 0:
         config.DRIVER.login_myanimelist()
         for series in to_update:
-            config.DRIVER.update_series(series)
+            status = config.DRIVER.update_series(series)
+
+            # When the driver failed to load the page because of a MyAnimeList url error
+            if status is None:
+                continue
 
             title = series.get('title')
             season_no = series.get('season')
             recent_updates = utils.get_recent_updates()
-            
-            recent_updates.append(f"{title} season {season_no}")
+            watched_eps = series.get('watched_episodes')
+            mal_watched_eps = series.get('mal_watched_eps')
+
+            status = {'1': 'Watching', '2': 'Completed', '5': 'To watch'}.get(status)
+            eps_change = f" (Ep {mal_watched_eps} → {watched_eps}) " if mal_watched_eps != watched_eps else " "
+
+            recent_updates.append(f"{title} - Season {season_no}{eps_change}({status})")
             config.socketio.emit('recent_updates', {'recent_updates': "\n".join(recent_updates)},
                                  namespace = '/socket')
             utils.save_recent_updates(recent_updates)

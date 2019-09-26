@@ -1,4 +1,5 @@
 import time
+from typing import Optional
 
 import selenium.common
 from colorama import Fore
@@ -136,7 +137,7 @@ class Driver:
         self.click('.pt16 .btn-form-submit')  # Click login button
         log(f"Logged in successfully as user {MAL_USERNAME}", Fore.GREEN)
 
-    def update_series(self, series: dict):
+    def update_series(self, series: dict) -> Optional[str]:
         log(f"Updating series {series.get('title')} season {series.get('season')}")
         self.get(f"https://myanimelist.net/anime/{series.get('mal_id')}")
         self.accept_privacy_notices()
@@ -145,7 +146,7 @@ class Driver:
         if self.element_exists('.message'):
             log("Error can't load page with that mal id")
             mapping.add_to_mapping_errors(series.get('tvdb_id'), series.get('title'), series.get('season'))
-            return
+            return None
 
         # Click the add to list button if it exists
         if self.element_exists('#showAddtolistAnime'):
@@ -168,6 +169,8 @@ class Driver:
             self.click('.js-anime-add-button')
         else:
             self.click('.js-anime-update-button')
+
+        return status
 
     def quit(self):
         """ Close the driver. """
