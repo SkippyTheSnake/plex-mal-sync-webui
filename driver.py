@@ -117,14 +117,14 @@ class Driver:
     def accept_privacy_notices(self):
         # Larger privacy notice
         if self.element_exists('.details_save--1ja7w'):
-            self.click('.details_save--1ja7w')
+            self.click('.details_save--1ja7w', False)
         # Click the medium privacy notice
         if self.element_exists('.intro_acceptAll--23PPA'):
-            self.click('.intro_acceptAll--23PPA')
+            self.click('.intro_acceptAll--23PPA', False)
 
         # First small privacy notice
         if self.element_exists('button'):
-            self.click('button')
+            self.click('button', False)
 
     def login_myanimelist(self, attempts: int = 1):
         if attempts < 5:
