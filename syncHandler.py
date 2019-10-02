@@ -38,7 +38,7 @@ def process_seasons(show: Show, series_mapping: dict, title: str, mal_list: MalL
 
         # When the season is unmapped
         if mal_id is None:
-            print(f"Unmapped season for {title} season: {season.seasonNumber}")
+            log(f"Unmapped season for {title} season: {season.seasonNumber}")
             continue
 
         mal_data = mal_list.get_anime(mal_id) or {}
@@ -73,7 +73,7 @@ def get_to_update(shows: list) -> list:
         series_mapping = tvdbid_mal_mapping.get(tvdb_id)
         # When the series is unmapped
         if series_mapping is None:
-            print(f"Unmapped series {title}")
+            log(f"Unmapped series {title}")
             continue
 
         to_update.extend(process_seasons(show, series_mapping, title, mal_list, tvdb_id))
