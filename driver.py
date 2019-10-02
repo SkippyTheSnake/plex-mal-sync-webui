@@ -93,7 +93,7 @@ class Driver:
 
         except TimeoutException:
             self.save_screenshot()
-            log("Failed to click element." + css_selector)
+            log(f"Failed to click element. {css_selector}")
 
     def wait_for(self, css_selector):
         """ Waits for an element to be loaded or become visible on the webpage.
