@@ -72,10 +72,11 @@ class Driver:
         self.wait_for(css_selector)
         return self.driver.find_elements_by_css_selector(css_selector)
 
-    def click(self, css_selector):
+    def click(self, css_selector, log_click_error: bool = True):
         """ Sends a click event to the target element using a css selector.
 
         :param css_selector: The css selector to locate the target element.
+        :param log_click_error: Whether or not to log when a click fails.
         """
         try:
             self.wait.until(ec.element_to_be_clickable((By.CSS_SELECTOR, css_selector)))
@@ -92,8 +93,8 @@ class Driver:
                 break
 
         except TimeoutException:
-            self.save_screenshot()
-            log(f"Failed to click element. {css_selector}")
+            if log_click_error:
+                log(f"Failed to click element. {css_selector}")
 
     def wait_for(self, css_selector):
         """ Waits for an element to be loaded or become visible on the webpage.
