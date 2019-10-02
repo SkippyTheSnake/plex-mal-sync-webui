@@ -6,7 +6,6 @@ import config
 from plexConnection import PlexConnection
 from utils import log
 import utils
-from pprint import pprint
 
 
 def update_mal_tvdb_mappings(shows: list):
