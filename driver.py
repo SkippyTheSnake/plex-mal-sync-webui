@@ -22,7 +22,7 @@ class Driver:
         log(f"Starting web driver", Fore.CYAN)
         # Setup chrome options
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument('--headless')
+        # chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--no-sandbox')
 
@@ -125,17 +125,30 @@ class Driver:
         if self.element_exists('button'):
             self.click('button')
 
-    def login_myanimelist(self):
-        log("Logging into MyAnimeList")
-        self.get(f"https://myanimelist.net/login.php?from=%2F")
-        self.accept_privacy_notices()
+    def login_myanimelist(self, attempts: int = 1):
+        if attempts < 5:
+            log(f"Logging into MyAnimeList attempt: {attempts}")
+            self.get(f"https://myanimelist.net/login.php?from=%2F")
+            self.accept_privacy_notices()
 
-        # Enter login information
-        self.send_keys('#loginUserName', MAL_USERNAME)
-        self.send_keys('#login-password', MAL_PASSWORD)
+            # Enter login information
+            self.send_keys('#loginUserName', MAL_USERNAME)
+            self.send_keys('#login-password', MAL_PASSWORD)
 
-        self.click('.pt16 .btn-form-submit')  # Click login button
-        log(f"Logged in successfully as user {MAL_USERNAME}", Fore.GREEN)
+            self.click('.pt16 .btn-form-submit')  # Click login button
+
+            if not self.login_successful():
+                return self.login_myanimelist(attempts + 1)
+
+            log(f"Logged in successfully as user {MAL_USERNAME}", Fore.GREEN)
+            return True
+
+        log(f"MyAnimeList login failed")
+        return False
+
+    def login_successful(self):
+        log("Checking if login was successful")
+        return self.element_exists(".header-profile-link")
 
     def update_series(self, series: dict) -> Optional[str]:
         log(f"Updating series {series.get('title')} season {series.get('season')}")

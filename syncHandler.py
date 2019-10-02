@@ -103,7 +103,13 @@ def do_sync():
     to_update = get_to_update(shows)
 
     if len(to_update) > 0:
-        config.DRIVER.login_myanimelist()
+        logged_in = config.DRIVER.login_myanimelist()
+
+        # If the login fails cancel the sync
+        if not logged_in:
+            log("Failed to log into MyAnimeList")
+            return
+
         for series in to_update:
             status = config.DRIVER.update_series(series)
 
