@@ -41,7 +41,7 @@ def download_tvdb_anidb_mapping() -> None:
         # Also some seasons are labelled "a" this is for long series like Dragonball skip these too
         season_number = anime.get('defaulttvdbseason')
         tvdbid, anidbid = anime.get('tvdbid'), anime.get('anidbid')
-        if season_number == "0" or not season_number.isdigit() or not tvdbid.isdigit() or not anidbid.isdigit():
+        if season_number is None or season_number == "0" or not season_number.isdigit() or not tvdbid.isdigit() or not anidbid.isdigit():
             continue
 
         # Create entry with the tvdbid
